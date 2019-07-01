@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="__STATIC__/index/favicon.ico">
+    <link rel="stylesheet" href="__STATIC__/index/css/iconfont.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/global.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="__STATIC__/index/css/login.css">
+
+    <title>恩雅网 - 登录 / 注册</title>
+
+</head>
+<body>
+    <div class="public-head-layout container">
+        <a class="logo" href="index.html"><img src="__STATIC__/index/images/icons/logo1.jpg" alt="U袋网" class="cover"></a>
+    </div>
+    <div style="background:url(__STATIC__/index/images/login.jpeg) no-repeat center center; ">
+        <div class="login-layout container">
+            <div class="form-box login" id="register">
+                <div class="tabs-nav">
+                    <h2>欢迎注册<a href="{:url('login/login')}" class="pull-right fz16" id="reglogin">返回登录</a></h2>
+                </div>
+                <div class="tabs_container">
+                    <form class="tabs_form" action="javascript:;" method="post" id="register_form">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span  aria-hidden="true">手机号:</span>
+                                </div>
+                                <input class="form-control phone" name="phone" id="register_phone" required placeholder="手机号" maxlength="11" autocomplete="off" type="text" required pattern="^1[3-8]{1}[0-9]{9}$" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" name="smscode" id="register_sms" placeholder="输入验证码" type="text" required>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary getsms" id="btn">发送短信验证码</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span  aria-hidden="true">登录密码</span>
+                                </div>
+                                <input  class="form-control password" name="adminpass" id="login_pwd" placeholder="请输入密码" autocomplete="off" type="password" required>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span  aria-hidden="true">确认密码</span>
+                                </div>
+                                <input  class="form-control password" name="password" id="login" placeholder="请输入密码" autocomplete="off" type="password" required>
+
+                            </div>
+                        </div>
+                        <div class="checkbox">
+                        </div>
+                        <!-- 错误信息 -->
+                        <div class="form-group">
+                            <div class="error_msg" id="login_error">
+                                <!-- 错误信息 范例html
+                                <div class="alert alert-warning alert-dismissible fade in" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong>密码错误</strong> 请重新输入密码
+                                </div>
+                                 -->
+                            </div>
+                        </div>
+                        <input class="btn btn-large btn-primary btn-lg btn-block submit" id="login_submit" type="submit" value="注册"><br>
+                        <p class="text-center">没有账号？<a href="javascript:;" id="register">免费注册</a></p>
+                    </form>
+                    </div>
+                </div>
+            </div>
+
+             <script src="__STATIC__/admin/jquery-1.8.3.min.js"></script>
+             <script>
+              $("#register").show();
+                $("#register_form").submit(function(event) {
+                    /* Act on the event */
+                    var adminpass=$('#login_pwd').val();
+                    var password=$('#login').val();
+                    if (adminpass==password) {
+                        var formdata =$("#register_form").serialize();
+                        $.post("{:url('login/add')}", {formdata:formdata}, function(data) {
+                            /*optional stuff to do after success */
+                            // console.log(data);
+                            if (data==2){
+                                alert("该手机号已被注册");
+                                location="register.html";
+                            }else if(data==0){
+                                alert("注册失败")
+                                location="register.html";
+                            }else if(data==1){
+                                alert("注册成功");
+                                location="login.html";
+                            }else if(data==3){
+                                alert("验证码错误");
+                                location="register.html";
+                            }
+                        });
+                    }else{
+                        alert("两次密码不一样");
+                    }
+                    return false;
+                });
+                $("#btn").click(function(event) {
+                    /* Act on the event */
+                    var phone=$("#register_phone").val();
+                    // console.log(phone);
+                    $.post("{:url('login/code')}", {phone: phone}, function(data) {
+                        /*optional stuff to do after success */
+                        // console.log(data);
+                        if(data==6){
+                            alert("已存在此手机号");
+                        }else if(data==5){
+                            alert("发送成功");
+                        }else if(data==4){
+                            alert("发送失败");
+                        }else{
+                            alert("注册成功");
+                            location="login.html";
+                        }
+                    });
+                });
+                var did=document.getElementById("btn");
+                var m=60;
+                //为did节点绑定点击事件
+                did.onclick=function(){
+                    // var phone=document.getElementById("phone").value;
+                    // alert(phone);
+                    var res=setInterval(function(){
+                        did.innerHTML=m;
+                        m--;
+                        did.disabled=true;
+                        if(m<1){
+                            m=60;
+                            clearInterval(res);
+                            did.innerHTML="获取";
+                            did.disabled=false;
+                        }
+                    },1000);
+                }
+    </script>
+            <!-- <script>
+                $(document).ready(function() {
+                    // 判断直接进入哪个页面 例如 login.php?p=register
+                    switch($.getUrlParam('p')) {
+                        case 'register': $('.register').show(); break;
+                        case 'resetpwd': $('.resetpwd').show(); break;
+                        default: $('.login').show();
+                    };
+                    // 发送验证码事件
+                    $('.getsms').click(function() {
+                        var phone = $(this).parents('form').find('input.phone');
+                        var error = $(this).parents('form').find('.error_msg');
+                        switch(phone.validatemobile()) {
+                            case 0:
+                                // 短信验证码的php请求
+                                error.html(msgtemp('验证码 <strong>已发送</strong>','alert-success'));
+                                $(this).rewire(60);
+                            break;
+                            case 1: error.html(msgtemp('<strong>手机号码为空</strong> 请输入手机号码',    'alert-warning')); break;
+                            case 2: error.html(msgtemp('<strong>手机号码错误</strong> 请输入11位数的号码','alert-warning')); break;
+                            case 3: error.html(msgtemp('<strong>手机号码错误</strong> 请输入正确的号码',  'alert-warning')); break;
+                        }
+                    });
+                    // 以下确定按钮仅供参考
+                    $('.submit').click(function() {
+                        var form = $(this).parents('form')
+                        var phone = form.find('input.phone');
+                        var pwd = form.find('input.password');
+                        var error = form.find('.error_msg');
+                        var success = form.siblings('.tabs_div');
+                        var options = {
+                            beforeSubmit: function () {
+                                console.log('喵喵喵')
+                            },
+                            success: function (data) {
+                                console.log(data)
+                            }
+                        }
+                        // 验证手机号参考这个
+                        switch(phone.validatemobile()) {
+                            case 1: error.html(msgtemp('<strong>手机号码为空</strong> 请输入手机号码',    'alert-warning')); return; break;
+                            case 2: error.html(msgtemp('<strong>手机号码错误</strong> 请输入11位数的号码','alert-warning')); return; break;
+                            case 3: error.html(msgtemp('<strong>手机号码错误</strong> 请输入正确的号码',  'alert-warning')); return; break;
+                        }
+                        // 验证密码复杂度参考这个
+                        switch(pwd.validatepwd()) {
+                            case 1: error.html(msgtemp('<strong>密码不能为空</strong> 请输入密码',    'alert-warning')); return; break;
+                            case 2: error.html(msgtemp('<strong>密码过短</strong> 请输入6位以上的密码','alert-warning')); return; break;
+                            case 3: error.html(msgtemp('<strong>密码过于简单</strong><br>密码需为字母、数字或特殊字符组合',  'alert-warning')); return; break;
+                        }
+                        form.ajaxForm(options);
+                        // 请求成功执行类似这样的事件
+                        // form.fadeOut(150,function() {
+                        //  success.fadeIn(150);
+                        // });
+                    })
+                });
+            </script> -->
+        </div>
+    </div>
+    <div class="footer-login container clearfix">
+        <!-- <ul class="links">
+            <a href=""><li>网店代销</li></a>
+            <a href=""><li>U袋学堂</li></a>
+            <a href=""><li>联系我们</li></a>
+            <a href=""><li>企业简介</li></a>
+            <a href=""><li>新手上路</li></a>
+        </ul> -->
+        <!-- 版权 -->
+        <p class="copyright">
+            © 2005-2017 U袋网 版权所有，并保留所有权利<br>
+            ICP备案证书号：闽ICP备16015525号-2&nbsp;&nbsp;&nbsp;&nbsp;福建省宁德市福鼎市南下村小区（锦昌阁）1栋1梯602室&nbsp;&nbsp;&nbsp;&nbsp;Tel: 18650406668&nbsp;&nbsp;&nbsp;&nbsp;E-mail: 18650406668@qq.com
+        </p>
+    </div>
+</body>
+</html>
