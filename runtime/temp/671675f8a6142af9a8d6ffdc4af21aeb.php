@@ -1,0 +1,190 @@
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:85:"F:\phpStudy\PHPTutorial\WWW\bqq\public/../application/admin\view\order\orderlist.html";i:1561882577;}*/ ?>
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/static/admin/css/font.css">
+        <link rel="stylesheet" href="/static/admin/css/xadmin.css">
+        <script src="/static/admin/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/admin/js/xadmin.js"></script>
+    </head>
+
+    <body>
+        <div class="x-nav">
+            <!-- <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">演示</a>
+                <a>
+                    <cite>导航元素</cite></a>
+            </span> -->
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+<form class="layui-form layui-col-space5" action="<?php echo url('/admin/order/orderlist'); ?>" method="form">
+   
+    <div class="layui-input-inline layui-show-xs-block">
+        <select name="state">
+            <option value="">订单状态</option>
+            <option value="1">待发货</option>
+            <option value="2">已发货</option>
+            <option value="3">已收货</option>
+        </select>
+    </div>
+    <div class="layui-input-inline layui-show-xs-block">
+        <input type="text" name="hao" placehooff" class="layui-input" placeholder="请输入订单号"></div>
+    <div class="layui-input-inline layui-show-xs-block">
+        <div class="layui-input-inline layui-show-xs-block">
+        <input type="text" name="uid" placehooff" class="layui-input" placeholder="请输入用户ID"></div>
+    <div class="layui-input-inline layui-show-xs-block">
+        <button class="layui-btn" lay-submit="" lay-filter="sreach">
+            <i class="layui-icon">&#xe615;</i></button>
+    </div>
+</form>
+                        </div>
+                       
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                                <thead>
+                                    <tr>
+                                      
+                                        <th>订单编号</th>
+                                        <th>用户ID</th>
+                                        <th>总金额</th>
+                                 
+                                        <th>下单时间</th>
+                                        <th>订单状态</th>
+                                       
+                                        
+                                        
+                                        <th>操作</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($array as $v): ?>
+                                    <tr>
+                                     
+                                        <td><?php echo $v['hao']; ?></td>
+                                        <td><?php echo $v['uid']; ?></td>
+                                        <td><?php echo $v['total']; ?></td>
+                                       
+                                        <td><?php echo $v['addtime']; ?></td>
+                                       
+    
+
+<?php if($v['state']==0): ?>
+    <td class="td-status"> 
+        <span class="layui-btn layui-btn-disabled layui-btn-mini">待付款</span>
+    </td>
+<?php elseif($v['state']==1): ?>
+    <td class="td-status"> 
+        <span class="layui-btn layui-btn-danger layui-btn-mini">待发货</span>
+    </td>
+<?php elseif($v['state']==2): ?>
+    <td class="td-status"> 
+        <span class="layui-btn layui-btn-normal layui-btn-mini">已发货</span>
+    </td>
+<?php else: ?>
+    <td class="td-status"> 
+        <span class="layui-btn layui-btn-green layui-btn-mini">已收货</span>
+    </td>
+<?php endif; ?>
+
+
+
+
+<td class="td-manage">
+<?php if($v['state']==1): ?>
+<a onclick="member_stop(this,'<?php echo $v['id']; ?>')" href="javascript:;"  title="发货">
+<i class="layui-icon">&#xe601;</i> 
+<?php endif; ?>                                    
+<a title="删除" onclick="member_del(this,'<?php echo $v['id']; ?>')" href="javascript:;">
+<i class="layui-icon">&#xe640;</i></a>
+                                        </td>
+                                    </tr>
+                                   <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-card-body ">
+                            <div class="page">
+                                <div>
+                                <?php echo $array->render(); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>layui.use(['laydate', 'form'],
+        function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+        });
+
+        /*用户-停用*/
+        function member_stop(obj,id){
+          layer.confirm('确认要发货吗？',function(index){
+
+              if($(obj).attr('title')=='发货'){
+                $.get("<?php echo url('/admin/order/update'); ?>",{id:id,state:2})
+                //发异步把用户状态进行更改
+                
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-danger').addClass('layui-btn-normal').html('已发货');
+                layer.msg('已发货!',{icon: 6,time:1000});
+                $(obj).remove();
+              }
+              
+          });
+      }
+
+        /*用户-删除*/
+        function member_del(obj, id) {
+            layer.confirm('确认要删除订此条订单吗？',
+            function(index) {
+                //发异步删除数据
+                $.get("<?php echo url('/admin/order/del'); ?>",{id:id})
+                $(obj).parents("tr").remove();
+                layer.msg('已删除!', {
+                    icon: 1,
+                    time: 1000
+                });
+            });
+        }
+
+        function delAll(argument) {
+
+            var data = tableCheck.getData();
+
+            layer.confirm('确认要删除吗？' + data,
+            function(index) {
+                //捉到所有被选中的，发异步进行删除
+                layer.msg('删除成功', {
+                    icon: 1
+                });
+                $(".layui-form-checked").not('.header').parents('tr').remove();
+            });
+        }</script>
+
+</html>
